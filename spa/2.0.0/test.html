@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JS+ SPA Test</title>
+</head>
+<body>
+  <h1>Testing SPA Routing System</h1>
+  
+  <!-- Navigation menu (links will be injected dynamically) -->
+  <nav id="menu" style="align-items: center; display: flex; gap: 1rem;"></nav>
+  
+  <!-- Main output container where pages will be rendered -->
+  <div id="output"></div>
+  
+  <!-- Transition indicator (shown when switching between pages) -->
+  <div id="transistor" style="background-color: rgb(17, 116, 255); bottom: 1.25rem; color: #fff; display: none; padding: 1.25rem; position: fixed; right: 1.25rem; text-align: center;">
+    <i>Wait a moment...</i>
+  </div>
+
+  <script>
+    // Detect if running under VSCode Live Server (usually port 5500)
+    const isLiveServer = location.host.includes("5500");
+
+    // Load test index script
+    const indexScript = document.createElement("script");
+    indexScript.type = "module";
+    indexScript.src = isLiveServer ? "./test/index.js" : "/test/index.js";
+    document.head.appendChild(indexScript);
+  </script>
+</body>
+</html>

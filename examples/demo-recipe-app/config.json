@@ -1,0 +1,14 @@
+{
+  "copyDirs": [
+    "assets"
+  ],
+  "copyFiles": [
+    "index.css",
+    "index.html",
+    "404.html",
+    "favorites.html"
+  ],
+  "entryFile": "index.js",
+  "outputDirectory": "dist"
+}
+

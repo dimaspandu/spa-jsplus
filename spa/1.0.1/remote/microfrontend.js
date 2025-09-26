@@ -1,0 +1,1 @@
+const microFEMessage = "Welcome to Remote Page!";
