@@ -1,7 +1,4 @@
-import {
-  importPlus,
-  injectStyle
-} from "../helpers/index.js";
+import importPlus from "../helpers/import-plus.js";
 import {
   setPageTitle,
   setActiveNav,
@@ -27,7 +24,16 @@ export default function homeBuilder(ctx)
   ctx.builder.future(dispose =>
   {
     // Import the CSS for the home page
-    importPlus("./styles/home.css").then(injectStyle).then(() => {
+    import("../styles/home.css", {
+      with: { type: "css" }
+    })
+    .then(({ default: sheet }) => {
+      document.adoptedStyleSheets = [
+        ...document.adoptedStyleSheets,
+        sheet
+      ];
+    })
+    .then(() => {
       // Import the static HTML template for the home page
       importPlus("./pages/index.html").then(html => {
         // Define how to dispose and replace the container with new HTML

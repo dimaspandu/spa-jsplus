@@ -1,7 +1,4 @@
-import {
-  importPlus,
-  injectStyle
-} from "../helpers/index.js";
+import importPlus from "../helpers/import-plus.js";
 import {
   setPageTitle,
   setActiveNav,
@@ -22,7 +19,16 @@ export default function aboutBuilder(ctx)
   ctx.builder.future(dispose =>
   {
     // Import the CSS for the About page
-    importPlus("./styles/about.css").then(injectStyle).then(() => {
+    import("../styles/about.css", {
+      with: { type: "css" }
+    })
+    .then(({ default: sheet }) => {
+      document.adoptedStyleSheets = [
+        ...document.adoptedStyleSheets,
+        sheet
+      ];
+    })
+    .then(() => {
       // Load the static About page template using importPlus
       importPlus("./pages/about.html").then(html => {
         // Define disposal logic and set the container to render the template

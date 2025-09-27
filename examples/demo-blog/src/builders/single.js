@@ -1,7 +1,4 @@
-import {
-  importPlus,
-  injectStyle
-} from "../helpers/index.js";
+import importPlus from "../helpers/import-plus.js";
 import {
   setActiveNav,
   setAnchorHydration,
@@ -14,7 +11,16 @@ export default function singleBuilder(ctx)
   ctx.builder.future(dispose =>
   {
     // Import the CSS for the article detail page
-    importPlus("./styles/single.css").then(injectStyle).then(() => {
+    import("../styles/single.css", {
+      with: { type: "css" }
+    })
+    .then(({ default: sheet }) => {
+      document.adoptedStyleSheets = [
+        ...document.adoptedStyleSheets,
+        sheet
+      ];
+    })
+    .then(() => {
       // Dynamically import the HTML template for the article detail page
       importPlus("./pages/single.html").then(html => {
         // Define disposal behavior and set the container to the imported template
