@@ -1,15 +1,18 @@
 import http from "http";
 import fs from "fs";
-import path from "path";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 // Resolve current file and directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const PORT = 4502; // Change port if needed
-const distDir = path.join(__dirname, "dist"); // Root directory for built files
+// Read configuration JSON
+const configPath = path.join(__dirname, "config.json");
+const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+
+const PORT = config.port; // Change port if needed
+const distDir = path.join(__dirname, config.outputDirectory); // Root directory for built files
 
 // Mapping of file extensions to MIME types
 const mimeTypes = {

@@ -8,5 +8,6 @@
   },
   "entryFile": "src/index.js",
   "outputDirectory": "dist",
-  "pagesDirectory": "src/pages"
+  "pagesDirectory": "src/pages",
+  "port": 4503
 }

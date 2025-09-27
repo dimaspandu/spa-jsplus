@@ -9,6 +9,6 @@
     "favorites.html"
   ],
   "entryFile": "index.js",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "port": 4502
 }
-

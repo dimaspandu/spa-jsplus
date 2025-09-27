@@ -7,5 +7,6 @@
     "src/globals.css"
   ],
   "entryFile": "src/index.js",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "port": 4511
 }
