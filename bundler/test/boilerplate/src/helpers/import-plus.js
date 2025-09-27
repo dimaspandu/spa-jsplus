@@ -2,7 +2,7 @@
  * importPlus(path, options)
  *
  * A helper that extends the native ES module `import()`
- * to also support non-JS assets like CSS, SVG, HTML, XML.
+ * to also support non-JS assets like SVG, HTML, XML.
  *
  * Uses a simple cache so the same path is not requested multiple times,
  * unless explicitly disabled via options.
@@ -10,7 +10,7 @@
  * @param {string} path - The relative or absolute path to the asset or module
  * @param {object} [options] - Optional settings
  * @param {boolean} [options.useCache=true] - Whether to use the internal cache
- * @returns {Promise|string|any|HTMLScriptElement} 
+ * @returns {Promise|string|any|HTMLScriptElement|HTMLLinkElement} 
  */
 const importCache = new Map();
 
@@ -32,8 +32,17 @@ export default function importPlus(path, options = { useCache: true }) {
     finalPath = path.includes("?") ? `${path}&${cacheBuster}` : `${path}?${cacheBuster}`;
   }
 
-  // Load CSS, SVG, HTML, XML as text
-  if (finalPath.match(/\.(css|svg|html|xml)$/i)) {
+  // Load CSS with <link>, others (SVG/HTML/XML) as text
+  if (finalPath.match(/\.css$/i)) {
+    loader = new Promise((resolve, reject) => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = finalPath;
+      link.onload = () => resolve(link);
+      link.onerror = () => reject(new Error("Failed to load " + finalPath));
+      document.head.appendChild(link);
+    });
+  } else if (finalPath.match(/\.(svg|html|xml)$/i)) {
     if (supportsPromise) {
       loader = fetch(finalPath).then(res => res.text());
     } else {
