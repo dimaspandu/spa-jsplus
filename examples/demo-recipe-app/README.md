@@ -1,27 +1,33 @@
 # SPA-JSPLUS
 
-SPA-JSPlus is a simple implementation of a **Single Page Application (SPA)** built with **vanilla JavaScript**.  
-This project is **not a library or framework**, but rather a **pattern/example** that demonstrates how SPA needs can be solved without relying on modern frameworks.  
+SPA-JSPlus is a simple implementation of a **Single Page Application (SPA)** built with **vanilla JavaScript**.
+This project is **not a library or framework**, but rather a **pattern/example** that demonstrates how SPA needs can be solved without relying on modern frameworks.
 
 The goals are:
-- To inspire developers who still enjoy working with **vanillaJS**.  
-- To provide a real-world example of how routing, state, and lifecycle management can be achieved with minimal code.  
-- To be easily adopted or customized for project-specific needs.  
+
+* To inspire developers who still enjoy working with **vanillaJS**.
+* To provide a real-world example of how routing, state, and lifecycle management can be achieved with minimal code.
+* To be easily adopted or customized for project-specific needs.
 
 ---
 
 ## Demo: Recipe App
 
-This folder (`examples/demo-recipe-app`) contains a **Recipe Application** built with the SPA-JSPlus pattern.  
+This folder (`examples/demo-recipe-app`) contains a **Recipe Application** built with the SPA-JSPlus pattern.
 It demonstrates how to implement routing, modals, and state management in a real-world scenario using **vanilla JavaScript**.
 
 ### Features
-- **Home Page** → Displays a list of recipes.  
-- **Favorites Page** → Shows only the recipes marked as favorite.  
-- **Recipe Details Modal** → Opens when you click a recipe, showing its ingredients and instructions.  
-- **Favorite/Unfavorite** → Toggle favorite status of each recipe.  
-- **Bottom Navigation** → Switch between Home and Favorites with active state styling.  
-- **404 Page** → Displays an error page for unknown routes. 
+
+* **Home Page** → Displays a list of recipes.
+* **Favorites Page** → Shows only the recipes marked as favorite.
+* **Recipe Details Modal** → Opens when you click a recipe, showing its ingredients and instructions.
+* **Favorite/Unfavorite** → Toggle favorite status of each recipe.
+* **Bottom Navigation** → Switch between Home and Favorites with active state styling.
+* **404 Page** → Displays an error page for unknown routes.
+
+### Screenshot
+
+![Recipe App Screenshot](assets/screenshot.png)
 
 ---
 
@@ -54,6 +60,7 @@ examples/demo-recipe-app/
 ## Usage
 
 ### Bundle
+
 Generate the bundled JavaScript only (written into `dist/index.js`):
 
 ```bash
@@ -63,6 +70,7 @@ node run.bundle.js
 ---
 
 ### Build
+
 Bundle + copy assets + preprocess files:
 
 ```bash
@@ -72,6 +80,7 @@ node run.build.js
 ---
 
 ### Start Build
+
 Serve the `dist/` directory (production-like mode):
 
 ```bash
@@ -81,6 +90,7 @@ node run.start.js
 ---
 
 ### Build & Start Combined
+
 You can also run build and then start immediately:
 
 ```bash
@@ -157,17 +167,19 @@ app.tap();
 
 ## Live Demo
 
-Try the live version here:  
+Try the live version here:
 [https://spademorecipeapp.netlify.app/](https://spademorecipeapp.netlify.app/)
 
 ---
 
 ## Notes
-- The SPA core implementation is located at: `spa.js`.  
-- This project is licensed under **MIT** → free to study, modify, and use.  
-- It is not an official library, but rather a pattern & experiment for vanillaJS lovers.  
+
+* The SPA core implementation is located at: `spa.js`.
+* This project is licensed under **MIT** → free to study, modify, and use.
+* It is not an official library, but rather a pattern & experiment for vanillaJS lovers.
 
 ---
 
 ## License
+
 MIT © dimaspandu
