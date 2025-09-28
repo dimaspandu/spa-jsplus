@@ -35,8 +35,8 @@ import {
  * plus polyfills for CSSStyleSheet and adoptedStyleSheets.
  * The runtime is injected once into the main bundle when includeRuntime = true.
  */
-const RUNTIME_CODE = (host) => stripComments(`
-(function(GlobalConstructor, global) {
+const RUNTIME_CODE = (host, modules, entry) => stripComments(`
+(function(GlobalConstructor, global, modules, entry) {
   var __modules__ = {};
   var __modulePointer__ = {};
   var __asyncModulePointer__ = {};
@@ -281,6 +281,12 @@ const RUNTIME_CODE = (host) => stripComments(`
     return module.exports;
   }
 
+  // Start registering modules
+  registry(modules);
+
+  // Start execution from entry module
+  require(entry);
+
   GlobalConstructor.prototype["*pointers"] = function(address) {
     if (address === "&registry") {
       return registry;
@@ -291,7 +297,9 @@ const RUNTIME_CODE = (host) => stripComments(`
   }; 
 })(
   typeof window !== "undefined" ? Window : this,
-  typeof window !== "undefined" ? window : this
+  typeof window !== "undefined" ? window : this,
+  ${modules},
+  ${entry}
 );
 `);
 
@@ -480,15 +488,7 @@ function bundle(graph, entryFilePath, host, includeRuntime) {
 
   if (includeRuntime) {
     return cleanUpCode(`
-      ${RUNTIME_CODE(host)}
-      (function(global, modules, entry) {
-        global["*pointers"]("&registry")(modules);
-        global["*pointers"]("&require")(entry);
-      })(
-        typeof window !== "undefined" ? window : this,
-        {${modules.slice(0, -1)}},
-        "${entryId}"
-      );
+      ${RUNTIME_CODE(host, `{${modules.slice(0, -1)}}`, `"${entryId}"`)}
     `);
   } else {
     return cleanUpCode(`
