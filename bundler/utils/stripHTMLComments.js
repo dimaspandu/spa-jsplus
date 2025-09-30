@@ -1,6 +1,8 @@
-import { stripComments } from "./stripComments.js";
-import { cleanUpCode } from "./cleanUpCode.js";
-import { cleanUpStyle } from "./cleanUpStyle.js";
+import {
+  cleanUpCode,
+  cleanUpStyle,
+  stripComments
+} from "./index.js";
 
 /**
  * stripHTMLComments(html)
@@ -15,7 +17,7 @@ import { cleanUpStyle } from "./cleanUpStyle.js";
  * @param {string} html - The input HTML string
  * @returns {string} - The processed HTML string with comments stripped and inline JS/CSS minified
  */
-export function stripHTMLComments(html) {
+export default function stripHTMLComments(html) {
   let output = "";
 
   // Regex with capture group for tag name (script/style)

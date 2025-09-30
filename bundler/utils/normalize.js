@@ -3,6 +3,6 @@
  * - Convert CRLF to LF
  * - Preserve newlines at start/end
  */
-export function normalize(str) {
+export default function normalize(str) {
   return str.replace(/\r\n/g, "\n").replace(/\s+/g, " ").trim();
 }

@@ -12,7 +12,7 @@
  * - Preserves quote style
  * - Maintains export order according to code
  */
-export function transpileESMToCJS(esmCode) {
+export default function transpileESMToCJS(esmCode) {
   let code = esmCode;
 
   // ------------------------

@@ -8,7 +8,7 @@
  * @param {string} outputFilePath - The original file path which may or may not have an extension.
  * @returns {string} - The normalized file path that always ends with `.js`.
  */
-export function ensureJsExtension(outputFilePath) {
+export default function ensureJsExtension(outputFilePath) {
   // Remove query parameters or fragments (#, ?) from the path
   const clean = outputFilePath.split(/[?#]/)[0];
 

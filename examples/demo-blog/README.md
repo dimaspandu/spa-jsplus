@@ -1,4 +1,17 @@
-# SPA Demo Blog (Hybrid SSR + SPA)
+# SPA-JSPLUS
+
+SPA-JSPlus is a simple implementation of a **Single Page Application (SPA)** built with **vanilla JavaScript**.
+This project is **not a library or framework**, but rather a **pattern/example** that demonstrates how SPA needs can be solved without relying on modern frameworks.
+
+The goals are:
+
+* To inspire developers who still enjoy working with **vanillaJS**.
+* To provide a real-world example of how routing, state, and lifecycle management can be achieved with minimal code.
+* To be easily adopted or customized for project-specific needs.
+
+---
+
+## Demo: Blog (Hybrid SSR + SPA)
 
 This is a **hybrid Single Page Application (SPA)** demo blog built using **vanilla JavaScript**, combining server-side rendering (SSR) for SEO-friendly pages with SPA navigation for smooth user experience.
 
@@ -125,36 +138,169 @@ This section describes the **hybrid SSR + SPA flow**:
 
 ---
 
-## Running the Demo
+## Usage
 
-There are two ways to run the demo locally:
+### Development Mode (Direct HTML)
 
-### 1. Using Node.js Scripts
+For quick testing during development, you can skip the build step:
 
-1. **Build the project**
+1. Open the file `src/index.html` inside your editor.  
+2. If you’re using **VSCode**, right-click `src/index.html` → **Open with Live Server**.  
+3. The app will run immediately without bundling or running Node.js scripts.  
+
+This mode is recommended for local development and debugging.
+
+---
+
+### Bundle
+
+Generate the bundled JavaScript only (written into `dist/index.js`):
+
+```bash
+node run.bundle.js
+```
+
+---
+
+### Build
+
+Bundle + copy assets + preprocess files:
 
 ```bash
 node run.build.js
 ```
 
-2. **Start the server**
+---
+
+### Start Build
+
+Serve the `dist/` directory (production-like mode):
 
 ```bash
 node run.start.js
 ```
 
-* After starting, open your browser and navigate to `http://localhost:PORT` (replace `PORT` with the one shown in the console).
+---
 
-### 2. Using Live Server (VSCode)
+### Build & Start Combined
 
-* Install the **Live Server** extension in VSCode.
-* Open the `/src` folder in VSCode.
-* Either:
+You can also run build and then start immediately:
 
-  * Right-click `index.html` → **Open with Live Server**, or
-  * Open terminal in `/src` and run `Live Server` from the context menu.
+```bash
+node run.build.js && node run.start.js
+```
 
-This will serve the SPA demo directly without running Node.js scripts.
+---
+
+## Example Code
+
+Here is a snippet from `src/index.js` showing how routes are declared:
+
+```js
+import app from "./app.js";
+import {
+  aboutBuilder,
+  error404Builder,
+  error500Builder,
+  homeBuilder,
+  singleBuilder
+} from "./builders/index.js";
+import setTransition from "./utils/setTransition.js";
+
+/**
+ * --------------------------------------------------------------
+ * ROUTE CONFIGURATION
+ * --------------------------------------------------------------
+ * The following section defines how the SPA (Single Page Application)
+ * should respond when the user navigates to different URLs.
+ *
+ * `app.reactor` registers routes:
+ *   - First argument: route path(s)
+ *   - Second argument: builder function that renders the view
+ *   - Third argument (optional): error handler in case of failure
+ *
+ * `app.err` registers a fallback when no routes are matched.
+ */
+
+/**
+ * --- Home reactor ---
+ * Defines the entry points for the home page.
+ * Matches three possible routes: "", "/", and "/home".
+ * When any of these paths are visited, the `homeBuilder` is executed
+ * to inject the home page template and logic into the app container.
+ * 
+ * If something fails while building the home page,
+ * `error500Builder` will be called to render a server error page.
+ */
+app.reactor(["", "/", "/home"], homeBuilder, error500Builder);
+
+/**
+ * --- About reactor ---
+ * Registers the "/about" route.
+ * Visiting this path will call `aboutBuilder`, which renders the "About" page.
+ * If rendering fails, `error500Builder` provides a graceful fallback.
+ */
+app.reactor("/about", aboutBuilder, error500Builder);
+
+/**
+ * --- Single reactor ---
+ * Registers the dynamic "single" route.
+ * The syntax `/{slug}` means this route can match any path like "/article-123".
+ * Example: "/hello-world" will call the `singleBuilder` with a context
+ * containing `{ slug: "hello-world" }`.
+ * 
+ * If rendering fails, `error500Builder` provides a graceful fallback.
+ */
+app.reactor("/{slug}", singleBuilder, error500Builder);
+
+/**
+ * --- Error reactor ---
+ * Handles cases when no registered route matches the requested path.
+ * For example, navigating to "/does-not-exist" will call `error404Builder`,
+ * which typically shows a "404 Not Found" page.
+ */
+app.err(error404Builder);
+
+/**
+ * --------------------------------------------------------------
+ * APP NOTIFIERS
+ * --------------------------------------------------------------
+ * Notifiers are hooks that can be triggered during app lifecycle events
+ * (like transitions or page loads). They allow adding visual effects
+ * or executing logic automatically when certain conditions are met.
+ */
+
+/**
+ * --- Transition notifier ---
+ * Adds a notifier named "transition".
+ * When triggered, it uses `setTransition` to show a visual indicator
+ * (the element with id="transistor") for 1 second.
+ * This is useful to provide feedback while navigating between routes.
+ */
+app.addNotifier("transition", setTransition);
+
+/**
+ * --- Page load notifier ---
+ * Adds another notifier named "meet".
+ * This also calls `setTransition`, but here it ensures the transition element
+ * is hidden once the new page is ready.
+ * 
+ * Together with the "transition" notifier, this creates a smooth UX:
+ * - "transition": show indicator when route changes
+ * - "meet": hide indicator after content is loaded
+ */
+app.addNotifier("meet", setTransition);
+
+/**
+ * --------------------------------------------------------------
+ * APP START
+ * --------------------------------------------------------------
+ * Finally, start the application routing.
+ * Calling `app.tap()` initializes the system, binds all the reactors
+ * and notifiers, and makes the SPA ready to handle navigation.
+ */
+app.tap();
+```
 
 ---
 

@@ -1,5 +1,5 @@
 // Utility: minify HTML into a single line
-export function minifyHTML(html) {
+export default function minifyHTML(html) {
   return html
     .replace(/>\s+</g, "><") // remove whitespace between tags
     .replace(/\n/g, "")       // remove newlines

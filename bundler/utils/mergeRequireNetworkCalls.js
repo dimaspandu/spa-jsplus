@@ -2,7 +2,7 @@
  * Merge require(...).http()/https() into require(".../<HTTP>/") 
  * or require(".../<HTTPS>/") without + if arg is string literal
  */
-export function mergeRequireNetworkCalls(source) {
+export default function mergeRequireNetworkCalls(source) {
   return source.replace(
     /require\s*\(\s*([^)]+)\s*\)\s*\.\s*(http|https)\s*\(\s*([^\)]*)\s*\)/g,
     function(_match, reqArg, proto, httpArg) {

@@ -5,7 +5,7 @@
  * while preserving strings, template literals, and regex literals.
  * This ensures that comment-like sequences inside strings/regex are not removed.
  */
-export function stripComments(code) {
+export default function stripComments(code) {
   let result = "";
   let insideSingleQuote = false;
   let insideDoubleQuote = false;

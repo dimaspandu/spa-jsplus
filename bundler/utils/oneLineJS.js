@@ -1,5 +1,5 @@
 // Utility: flatten JavaScript code into a single line safely
-export function oneLineJS(code) {
+export default function oneLineJS(code) {
   return code
     // Preserve string literals by escaping newlines inside them
     .replace(/(["'`])((?:\\\1|.)*?)\1/g, (m) => {

@@ -1,11 +1,10 @@
 import {
   cleanUpCode,
   cleanUpStyle,
-  downlevelConstLet,
   minifyHTML,
+  minifyJS,
   stripComments,
-  stripHTMLComments,
-  tinyTerser
+  stripHTMLComments
 } from "../../bundler/utils/index.js";
 import { exec } from "child_process";
 import { promisify } from "util";
@@ -122,8 +121,7 @@ async function processAndCopyFile(src, dest) {
     if (ext === ".js" && !alreadyMinified) {
       content = stripComments(content);
       content = cleanUpCode(content);
-      content = downlevelConstLet(content);
-      content = await tinyTerser(content);
+      content = await minifyJS(content);
     } else if (ext === ".html") {
       content = minifyHTML(stripHTMLComments(content));
     } else if (ext === ".css") {

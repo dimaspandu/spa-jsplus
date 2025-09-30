@@ -12,7 +12,7 @@
  * - Special case: If a template literal is assigned to `.innerHTML`,
  *   its HTML content is also minified into a single line
  */
-export function cleanUpCode(code) {
+export default function cleanUpCode(code) {
   let result = "";
   let inSingle = false, inDouble = false, inTemplate = false, inRegex = false;
   let prev = "";

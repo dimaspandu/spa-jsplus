@@ -11,7 +11,7 @@
  * - Ensures spacing after "and(" in media queries is corrected
  * - Removes unnecessary semicolons before "}"
  */
-export function cleanUpStyle(css) {
+export default function cleanUpStyle(css) {
   let result = "";
   let inSingle = false, inDouble = false;
   let prev = "";

@@ -7,7 +7,7 @@
  * - Escapes double quotes
  * - Escapes newlines into \n
  */
-export function escapeForDoubleQuote(str) {
+export default function escapeForDoubleQuote(str) {
   return str
     .replace(/\\/g, "\\\\") // escape backslash
     .replace(/"/g, '\\"')   // escape double quotes

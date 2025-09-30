@@ -1,5 +1,5 @@
 /**
- * @license JS+ (ESM TO CJS-CLIENT) v1.0.7
+ * @license JS+ (ESM TO CJS-CLIENT) v1.0.8
  * jsplus/#/cjs-to-cjs-client.js
  *
  * Reference: https://github.com/ronami/minipack
@@ -14,16 +14,13 @@ import path from "path";
 import {
   cleanUpCode,
   cleanUpStyle,
-  downlevelArrowFunction,
-  downlevelAsyncFunction,
-  downlevelConstLet,
   ensureJsExtension,
   escapeForDoubleQuote,
   mergeRequireNetworkCalls,
   minifyHTML,
+  minifyJS,
   oneLineJS,
   stripComments,
-  tinyTerser,
   transpileESMToCJS
 } from "./utils/index.js";
 
@@ -36,87 +33,10 @@ import {
  * The runtime is injected once into the main bundle when includeRuntime = true.
  */
 const RUNTIME_CODE = (host, modules, entry) => stripComments(`
-(function(GlobalConstructor, global, modules, entry) {
+(function(GlobalConstructor, modules, entry) {
   var __modules__ = {};
   var __modulePointer__ = {};
   var __asyncModulePointer__ = {};
-
-  // Polyfill for CSSStyleSheet and adoptedStyleSheets
-  (function(global) {
-    // If browser already supports CSSStyleSheet with replaceSync, skip polyfill
-    if (typeof global.CSSStyleSheet === "function" && "replaceSync" in global.CSSStyleSheet.prototype) {
-      return;
-    }
-
-    // Polyfilled CSSStyleSheet constructor
-    function CSSStyleSheet() {
-      this._styleEl = document.createElement("style");
-      this._styleEl.setAttribute("data-polyfilled", "true");
-      var head = document.head || document.getElementsByTagName("head")[0];
-      head.appendChild(this._styleEl);
-    }
-
-    // Synchronous stylesheet replacement
-    CSSStyleSheet.prototype.replaceSync = function(cssText) {
-      if (this._styleEl.styleSheet) {
-        // For IE8 and older IE versions
-        this._styleEl.styleSheet.cssText = cssText || "";
-      } else {
-        // For modern browsers
-        this._styleEl.textContent = cssText || "";
-      }
-      return this;
-    };
-
-    // Asynchronous stylesheet replacement returning a Promise
-    CSSStyleSheet.prototype.replace = function(cssText) {
-      var self = this;
-      return new Promise(function(resolve) {
-        self.replaceSync(cssText);
-        resolve(self);
-      });
-    };
-
-    // Define adoptedStyleSheets property on the document object
-    function defineAdoptedStyleSheets(doc) {
-      if (doc.adoptedStyleSheets !== undefined) return;
-
-      var adopted = [];
-
-      // Try to define property using Object.defineProperty
-      try {
-        Object.defineProperty(doc, "adoptedStyleSheets", {
-          get: function() {
-            return adopted;
-          },
-          set: function(sheets) {
-            // Remove old stylesheets
-            for (var i = 0; i < adopted.length; i++) {
-              var old = adopted[i];
-              if (old && old._styleEl && old._styleEl.parentNode) {
-                old._styleEl.parentNode.removeChild(old._styleEl);
-              }
-            }
-            // Assign new sheets
-            adopted = sheets || [];
-            // Append new stylesheets to head
-            for (var j = 0; j < adopted.length; j++) {
-              if (adopted[j] && adopted[j]._styleEl) {
-                var head = document.head || document.getElementsByTagName("head")[0];
-                head.appendChild(adopted[j]._styleEl);
-              }
-            }
-          }
-        });
-      } catch (e) {
-        // Fallback for IE8 which does not allow defineProperty on DOM objects
-        doc.adoptedStyleSheets = adopted;
-      }
-    }
-
-    defineAdoptedStyleSheets(document);
-    global.CSSStyleSheet = CSSStyleSheet;
-  })(global);
 
   // Extract host or base path from current window URL
   function getHostFromCurrentUrl() {
@@ -297,7 +217,6 @@ const RUNTIME_CODE = (host, modules, entry) => stripComments(`
   }; 
 })(
   typeof window !== "undefined" ? Window : this,
-  typeof window !== "undefined" ? window : this,
   ${modules},
   ${entry}
 );
@@ -346,15 +265,9 @@ function createNode(filename) {
     // For JS: transpile ESM -> CJS, strip comments, inline into single line
     return mergeRequireNetworkCalls(
       cleanUpCode(
-        downlevelConstLet(
-          downlevelArrowFunction(
-            downlevelAsyncFunction(
-              transpileESMToCJS(
-                oneLineJS(
-                  stripComments(rawCode)
-                )
-              )
-            )
+        transpileESMToCJS(
+          oneLineJS(
+            stripComments(rawCode)
           )
         )
       )
@@ -368,7 +281,7 @@ function createNode(filename) {
   if (extension === ".json") {
     productionCode = `exports.default = ${originalCode};`;
   } else if (extension === ".css") {
-    productionCode = `var sheet = new CSSStyleSheet(); sheet.replaceSync("${escapeForDoubleQuote(originalCode)}"); exports.default = sheet;`;
+    productionCode = `var raw = "${escapeForDoubleQuote(originalCode)}";if(typeof CSSStyleSheet === "undefined"){exports.default = raw;}else{var sheet = new CSSStyleSheet();sheet.replaceSync(raw);exports.default = sheet;}`;
   } else if (extension === ".svg" || extension === ".xml" || extension === ".html") {
     productionCode = `exports.default = "${escapeForDoubleQuote(originalCode)}";`;
   }
@@ -560,13 +473,12 @@ export default async function main({
   const mainGraph = separatedGraphs.length > 0 ? graph.filter(module => !module.separated) : graph;
 
   // Generate main bundle
-  let result = tinyTerser(
-    cleanUpCode(
-      downlevelConstLet(
-        bundle(mainGraph, entryFile, host, includeRuntime)
-      )
-    )
+  let code = cleanUpCode(
+    bundle(mainGraph, entryFile, host, includeRuntime)
   );
+
+  // Important: minify is async
+  let result = await minifyJS(code);
 
   // Replace baseDir with namespace
   result = result.replace(new RegExp(baseDir, "g"), namespace);
