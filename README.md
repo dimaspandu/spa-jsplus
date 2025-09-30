@@ -21,6 +21,24 @@ The goals are:
 
 ---
 
+## Table of Contents
+- [Why JS+ Exists](#why-js-exists)
+- [Features](#features)
+- [How It Works](#how-it-works)
+  - [Routing](#routing)
+  - [Navigation](#navigation)
+  - [Lifecycle Hooks](#lifecycle-hooks)
+  - [Lifecycle Hooks Diagram](#lifecycle-hooks-diagram)
+  - [Hashtag mode vs History API](#hashtag-mode-vs-history-api)
+  - [Query String & Params](#query-string--params)
+- [SPA-JSPlus (CDN Build)](#spa-jsplus-cdn-build)
+- [Live Demo](#live-demo)
+- [Notes](#notes)
+- [Learn More](#learn-more)
+- [License](#license)
+
+---
+
 ## Why JS+ Exists
 
 Too many web projects become tangled in `node_modules`, build scripts, and dependency churn.  
@@ -123,17 +141,37 @@ Each lifecycle hook has two properties:
 
 #### Special behaviors
 
--   If `.delay = -1` on **onExit**, the route will exit immediately and
-    the history state will be cleared, simulating a "hard exit".
+- **Hard exit is now handled with `ctx.endReactor` (replaces `.delay = -1`)**  
+  To force a route to immediately clear history when exiting:
+  ```js
+  ctx.endReactor = true; 
+  ```
+  Or with runtime logic:
+  ```js
+  ctx.endReactor = () => ctx.params.forceExit === "1";
+  ```
 
--   If `.set` returns `false` on **onExit**, it will **block navigation
-    back**.
+- If `.set` returns `false` on **onExit**, it will **block navigation back**.
 
-    Example:
+  Example:
+  ```js
+  ctx.onExit.set = () => false; // prevent leaving this route
+  ```
 
-    ``` js
-    ctx.onExit.set = () => false; // prevent leaving this route
-    ```
+---
+
+### Lifecycle Hooks Diagram
+
+The following diagram illustrates the transition flow of lifecycle hooks  
+(`onMeet`, `onArrive`, `onExit`, `onComeback`) in SPA-JSPlus:
+
+![SPA-JSPlus Reactor Lifecycle Hooks](./doc/spa-jsplus_reactor-lifecycle-hooks.png)
+
+#### Rules Summary
+- **onArrive** → only once, when the route is first pushed onto the stack.  
+- **onExit** → triggered before a route is popped from the stack (e.g., `history.back`).  
+- **onComeback** → triggered when returning to a previously visited route after another route is popped.  
+- **onMeet** → always runs whenever a route becomes active (new push, comeback, or revisit).  
 
 ---
 
@@ -190,6 +228,10 @@ Simply include the generated file in your HTML:
       component.innerHTML = "<h1>Hello from CDN build!</h1>";
       return component;
     };
+  });
+
+  app.err((ctx) => {
+    ctx.container = "<h1>404</h1>";
   });
 
   app.tap();

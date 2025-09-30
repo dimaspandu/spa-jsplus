@@ -21,7 +21,6 @@ This is a **hybrid Single Page Application (SPA)** demo blog built using **vanil
 
 * [Overview](#overview)
 * [How It Works](#how-it-works)
-
   * [Initial Load / SSR](#initial-load--ssr)
   * [Navigation / SPA](#navigation--spa)
   * [Dynamic Content Loading](#dynamic-content-loading)
