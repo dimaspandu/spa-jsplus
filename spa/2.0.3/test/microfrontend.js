@@ -1,0 +1,1 @@
+window.app.pipe["/remote"].context.params.message = "Welcome to the Remote Page!";
