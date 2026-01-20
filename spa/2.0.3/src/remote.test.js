@@ -1,0 +1,1 @@
+export const message = "Welcome to the Remote Page!";

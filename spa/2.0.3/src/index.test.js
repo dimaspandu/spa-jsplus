@@ -1,5 +1,4 @@
-import "./index.html";
-import Spa from "../src/index.js";
+import Spa from "./index.js";
 
 // ---------------------------------------------------------------------------
 // SPA Initialization Options
@@ -226,20 +225,16 @@ app.reactor("/about", function(ctx) {
 
 // Remote page (loads external script dynamically)
 app.reactor("/remote", function(ctx) {
-  const loader = document.createElement("script");
-  loader.setAttribute("src", `./test/microfrontend.js`);
-  document.head.appendChild(loader);
-
   // Load script asynchronously
-  ctx.builder.future(function(dispose) {
-    loader.onload = function() {
-      // Apply once loaded
-      dispose(function snapshot() {
-        ctx.container = () => (`
-          <h1>${ctx.params.message}</h1>
-        `);
-      });
-    };
+  ctx.builder.future(async function(dispose) {
+    const remote = await import("./remote.test.js");
+    
+    // Apply once loaded
+    dispose(function snapshot() {
+      ctx.container = () => (`
+        <h1>${remote.message}</h1>
+      `);
+    });
   });
 
   ctx.onMeet.set = () => {
@@ -254,7 +249,7 @@ app.reactor("/search/{query}", function(ctx) {
 
   ctx.container = () => (`
     <h1>Are you searching for "${ctx.params.query}"?</h1>
-    <button id="button-blck" type="button">BLOCK</button>
+    <button id="button-block" type="button">BLOCK</button>
     <hr />
     <button id="button-next" type="button">GO TO SOMEWHERE</button>
     <hr />
@@ -302,7 +297,7 @@ app.reactor("/search/{query}", function(ctx) {
     setTitle("SPA - Search!");
 
     // Handle block button (prevent back navigation temporarily)
-    const buttonBlock = document.getElementById("button-blck");
+    const buttonBlock = document.getElementById("button-block");
     if (buttonBlock) {
       buttonBlock.onclick = () => {
         const blocker = document.getElementById("blocker");
@@ -344,31 +339,18 @@ app.reactor(
   function(ctx) {
     // Use builder.future to handle asynchronous tasks before rendering
     ctx.builder.future(async function(dispose) {
-      // // Attempt to dynamically import an external module
-      // import("https://djsmicrofrontends.netlify.app/resources/somewhere.js", { namespace: "MicroFrontend" })
-      //   .then(function() {
-      //     // If the import succeeds, call dispose with a snapshot function
-      //     // The snapshot defines what should be rendered when ready
-      //     dispose(function() {
-      //       ctx.container = "<h1>Hello from Somewhere!</h1>";
-      //     });
-      //   })
-      //   .catch(dispose); 
-      //   // If the import fails, call dispose immediately.
-      //   // This will trigger the error reactor defined below.
       // Attempt to dynamically import an external module
-      try {
-        await import("https://djsmicrofrontends.netlify.app/resources/somewhere.js", { namespace: "MicroFrontend" });
-        // If the import succeeds, call dispose with a snapshot function
-        // The snapshot defines what should be rendered when ready
-        dispose(function() {
-          ctx.container = "<h1>Hello from Somewhere!</h1>";
-        });
-      } catch(e) {
+      import("https://djsmicrofrontends.netlify.app/resources/somewhere.js", { namespace: "MicroFrontend" })
+        .then(function() {
+          // If the import succeeds, call dispose with a snapshot function
+          // The snapshot defines what should be rendered when ready
+          dispose(function() {
+            ctx.container = "<h1>Hello from Somewhere!</h1>";
+          });
+        })
+        .catch(dispose); 
         // If the import fails, call dispose immediately.
         // This will trigger the error reactor defined below.
-        dispose(e);
-      }
     });
   },
   function(ctx) {
@@ -462,5 +444,5 @@ app.addNotifier("meet", function() {
 // Start the SPA (enable routing)
 app.tap();
 
-// Expose App to window
-window.app = app;
+// Expose App
+export default app;

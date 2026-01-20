@@ -23,8 +23,9 @@ const __dirname = path.dirname(__filename);
  *   Enables minification to simulate production output.
  */
 await bundle({
-  entry: path.join(__dirname, "test", "index.js"),
+  entry: path.join(__dirname, "src", "pre-index.test.js"),
   outputDir: path.join(__dirname, "dist"),
+  outputFilename: "index.test.js",
   uglified: true
 });
 
