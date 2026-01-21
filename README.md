@@ -112,13 +112,31 @@ These demos intentionally showcase:
 
 ## Bundler & CDN Usage
 
-The `bundler/` directory provides an **optional build machine** to generate a single-file browser-ready output.
+SPA-JSPlus **does not require a bundler** when running in **native ESM browser mode** (development / learning).
+
+However, for **bundled production output** (single-file, CDN-friendly, no ESM/CORS issues),  
+this project **intentionally uses a custom bundler**:
+
+### ngapack
+
+> **ngapack** is a **native JavaScript module bundler without `node_modules`**.
+
+🔗 https://github.com/dimaspandu/ngapack
+
+ngapack is used **only for bundling**, not for development, and aligns with SPA-JSPlus philosophy:
+
+* No dependency tree
+* No framework-specific assumptions
+* No opaque build steps
+* Minimal, inspectable output
+
+The `bundler/` directory provides an **optional build machine** powered by ngapack to generate a **single-file browser-ready bundle**.
 
 This is useful when:
 
 * You want zero ESM / CORS issues
 * You want a single `<script>` include
-* You are deploying to restrictive environments
+* You are deploying to restrictive or legacy environments
 
 Bundled output exposes the engine as:
 

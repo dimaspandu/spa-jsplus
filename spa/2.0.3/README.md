@@ -61,6 +61,30 @@ This project demonstrates how a modern SPA can be built using **native browser A
 
 ---
 
+## Bundler: ngapack
+
+SPA-JSPlus **does not require any bundler** when running in **native ESM browser mode**.
+
+However, for **bundled usage** (production builds, CDN distribution, or environments without ES module support), SPA-JSPlus intentionally uses a **custom native bundler** called **ngapack**.
+
+### What is ngapack?
+
+**ngapack** is a **native JavaScript module bundler without `node_modules`**.
+
+🔗 [https://github.com/dimaspandu/ngapack](https://github.com/dimaspandu/ngapack)
+
+It is designed to align with SPA-JSPlus core principles:
+
+* No dependency graph
+* No framework assumptions
+* No `node_modules`
+* Fully inspectable bundling process
+* Deterministic, single-file output
+
+ngapack is used **only for bundling**, never during development.
+
+---
+
 ## What’s New in v2.0.3
 
 ### 🔹 New Build & Execution Workflow
