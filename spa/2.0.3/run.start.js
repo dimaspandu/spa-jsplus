@@ -43,7 +43,7 @@ function createStaticServer(rootDir, port) {
     const urlPath = decodeURIComponent(req.url.split("?")[0]);
     const filePath = path.join(
       rootDir,
-      urlPath === "/" ? "/index.html" : urlPath
+      urlPath === "/" ? "/index.test.html" : urlPath
     );
 
     fs.readFile(filePath, (err, data) => {

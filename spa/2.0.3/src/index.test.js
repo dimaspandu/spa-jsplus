@@ -333,7 +333,32 @@ app.reactor("/search/{query}", function(ctx) {
   };
 });
 
+// ---------------------------------------------------------------------------
 // Broken page (demonstrates dynamic import with error handling)
+//
+// IMPORTANT NOTE ABOUT ENVIRONMENT:
+//
+// - When running with `node run.dev.js` (native ESM, no bundling):
+//   This route WILL FAIL due to browser CORS restrictions.
+//   The dynamic import below tries to load a remote ES module from a
+//   different origin (Netlify), which is blocked because:
+//     - No proper CORS headers are sent
+//     - Native browser module loading enforces strict cross-origin rules
+//
+// - When running with `node run.start.js` (bundled output):
+//   This route WILL WORK as expected.
+//   The bundler resolves and wraps the dynamic import so it no longer
+//   relies on the browser performing a cross-origin module fetch.
+//
+// This route intentionally exists to demonstrate:
+// - async route builders (`ctx.builder.future`)
+// - dynamic import error handling
+// - route-level fallback (error reactor)
+// - and the real-world difference between native ESM dev mode
+//   vs bundled production execution
+// ---------------------------------------------------------------------------
+// Tip: This pattern is useful for micro-frontend loading,
+// where remote modules may fail independently from the main SPA.
 app.reactor(
   "/broken",
   function(ctx) {
@@ -341,17 +366,22 @@ app.reactor(
     ctx.builder.future(async function(dispose) {
       // Attempt to dynamically import an external module
       import("https://djsmicrofrontends.netlify.app/resources/somewhere.js", { namespace: "MicroFrontend" })
-        .then(function() {
+        .then(function({ default: somewhere }) {
           // If the import succeeds, call dispose with a snapshot function
           // The snapshot defines what should be rendered when ready
           dispose(function() {
-            ctx.container = "<h1>Hello from Somewhere!</h1>";
+            ctx.container = `<h1>${somewhere}</h1>`;
           });
         })
         .catch(dispose); 
         // If the import fails, call dispose immediately.
         // This will trigger the error reactor defined below.
     });
+
+    ctx.onMeet.set = () => {
+      setTitle("SPA - Broken!");
+      setActiveMenu("menu-broken");
+    };
   },
   function(ctx) {
     // Fallback error handler for this route
