@@ -28,7 +28,7 @@
 
 export default function stringifyCSSTokens(tokens) {
   if (!Array.isArray(tokens) || tokens.length === 0) return "";
-
+  
   let out = "";
 
   for (let i = 0; i < tokens.length; i++) {
@@ -40,20 +40,11 @@ export default function stringifyCSSTokens(tokens) {
       continue;
     }
 
-    let needSpace = false;
-
-    // at_keyword + identifier
-    // identifier + identifier
-    if (isWord(prev) && isWord(curr)) {
-      needSpace = true;
+    if (needsSpace(prev, curr)) {
+      out += " ";
     }
 
-    // identifier + at_keyword is not valid but safe-guard
-    if (isWord(prev) && curr.type === "at_keyword") {
-      needSpace = true;
-    }
-
-    out += needSpace ? " " + curr.value : curr.value;
+    out += curr.value;
   }
 
   return out;
@@ -66,3 +57,34 @@ function isWord(t) {
     t.type === "function"
   );
 }
+
+function needsSpace(a, b) {
+  if (!a || !b) return false;
+
+  // word + word (media screen, and, etc)
+  if (isWord(a) && isWord(b)) return true;
+
+  // identifier + number/dimension (solid 1px, transform 0.2s)
+  if (
+    a.type === "identifier" &&
+    (b.type === "number" || b.type === "dimension")
+  ) return true;
+
+  // number/dimension + identifier (100 %)
+  if (
+    (a.type === "number" || a.type === "dimension") &&
+    b.type === "identifier"
+  ) return true;
+
+  // number/dimension + hash (1px #fff)
+  if (
+    (a.type === "number" || a.type === "dimension") &&
+    b.type === "hash"
+  ) return true;
+
+  // at_keyword + identifier (@media screen)
+  if (a.type === "at_keyword" && b.type === "identifier") return true;
+
+  return false;
+}
+

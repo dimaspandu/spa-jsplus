@@ -1,36 +1,74 @@
 import cssTokenizer from "../../tokenizer/css/main.js";
 import stringifyCSSTokens from "../../stringifyTokens/css/main.js";
+import { CSS_MINIFY_LEVEL } from "./constants.js";
 
 /**
- * minifyCSS(code)
- * ------------------------------------------------------------
- * High-level CSS normalization utility.
+ * minifyCSS
+ * ------------------------------------------------------------------
+ * High-level CSS minification utility with configurable depth.
  *
- * This function performs a lightweight CSS minification by:
- * 1. Tokenizing the input CSS source.
- * 2. Removing non-semantic tokens (whitespace, newlines, comments).
- * 3. Re-stringifying the remaining tokens into a compact CSS string.
+ * Minification levels:
  *
- * Design notes:
- * - This is NOT a semantic CSS parser.
- * - No selector or rule reordering is performed.
- * - Safe for static analysis and deterministic output.
+ * - CSS_MINIFY_LEVEL.SAFE
+ *   Removes comments and newline tokens only.
+ *   All original whitespace is preserved.
+ *
+ * - CSS_MINIFY_LEVEL.DEEP (default)
+ *   Removes comments, newlines, and whitespace,
+ *   then re-stringifies tokens into compact CSS.
  *
  * @param {string} code - Raw CSS source code
+ * @param {Object} [options]
+ * @param {"safe" | "deep"} [options.level] - Minification level
  * @returns {string} Minified CSS output
  */
-export default function minifyCSS(code) {
-  if (typeof code !== "string" || code.length === 0) return "";
+export default function minifyCSS(code, options = {}) {
+  if (typeof code !== "string" || !code) return "";
 
+  const level = options.level ?? CSS_MINIFY_LEVEL.DEEP;
   const tokens = cssTokenizer(code);
 
-  // Remove formatting-only tokens
-  const cleanedTokens = tokens.filter(
+  // --------------------------------------------------------------
+  // SAFE mode:
+  // Remove comments and newlines only; preserve whitespace
+  // --------------------------------------------------------------
+  if (level === CSS_MINIFY_LEVEL.SAFE) {
+    let out = "";
+    let lastWasWhitespace = false;
+
+    for (const t of tokens) {
+      if (t.type === "comment" || t.type === "newline") {
+        continue;
+      }
+
+      if (t.type === "whitespace") {
+        // collapse multiple / long whitespace into a single space
+        if (!lastWasWhitespace) {
+          out += " ";
+          lastWasWhitespace = true;
+        }
+        continue;
+      }
+
+      lastWasWhitespace = false;
+      out += t.value;
+    }
+
+    // remove leading and trailing whitespace only
+    return out.trim();
+  }
+
+  // --------------------------------------------------------------
+  // DEEP mode:
+  // Aggressive minification by removing comments, newlines,
+  // and whitespace before re-stringifying tokens
+  // --------------------------------------------------------------
+  const cleaned = tokens.filter(
     (t) =>
+      t.type !== "comment" &&
       t.type !== "newline" &&
-      t.type !== "whitespace" &&
-      t.type !== "comment"
+      t.type !== "whitespace"
   );
 
-  return stringifyCSSTokens(cleanedTokens);
+  return stringifyCSSTokens(cleaned);
 }

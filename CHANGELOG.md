@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file. Dates are d
 
 ---
 
+#### [2.0.4](https://github.com/dimaspandu/spa-jsplus/tree/main/spa/2.0.4)
+
+> 25 January 2026
+
+**Focus: Internal Bundler & Analyzer Stability**
+
+- chore(bundler): update internal analyzer to improve CSS minification behavior
+- improve(css): normalize excessive whitespace in SAFE minification mode
+- fix(css): prevent invalid CSS output caused by missing space between adjacent values
+  (e.g. `1px #fff`) during DEEP minification
+- test(bundler): add regression coverage for CSS token adjacency and whitespace handling
+
+**Notes**
+- No changes to SPA public APIs or runtime behavior.
+- Improvements affect bundled CSS output only.
+- Upgrade is safe and recommended for production bundling consistency.
+
+---
+
 #### [2.0.3](https://github.com/dimaspandu/spa-jsplus/tree/main/spa/2.0.3)
 
 > 18 January 2026
