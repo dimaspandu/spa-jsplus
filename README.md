@@ -1,10 +1,12 @@
-# SPA-JSPLUS
+﻿# SPA-JSPLUS
 
 SPA-JSPlus is an experimental **Single Page Application (SPA) engine** written in **vanilla JavaScript**, focused on **clarity, portability, and control**.
 
+**No npm, no `node_modules`.** This repo intentionally avoids dependency managers and build stacks. Everything runs with plain Node.js and native browser APIs.
+
 This repository is **not a framework and not a library in the traditional sense**. Instead, it is a **collection of evolving SPA engines (by version)** that demonstrate how modern SPA behavior can be implemented with minimal abstractions and without dependency-heavy ecosystems.
 
-As of now, development and documentation are **primarily focused on SPA v2.0.3**, which represents the most complete and opinionated iteration of the project.
+As of now, development and documentation are **primarily focused on SPA v2.0.4**, which represents the most complete and opinionated iteration of the project in terms of execution workflow.
 
 ---
 
@@ -29,34 +31,35 @@ Everything is designed to be:
 
 ```
 SPA-JSPLUS/
-├─ bundler/        # Optional bundler for CDN / production builds
-├─ doc/            # Diagrams & documentation assets
-├─ examples/       # Real demo applications
-├─ spa/            # SPA engines by version
-│  ├─ 1.0.0
-│  ├─ 1.0.1
-│  ├─ 2.0.0
-│  ├─ 2.0.1
-│  ├─ 2.0.2
-│  └─ 2.0.3   ← actively documented & recommended
-├─ CHANGELOG.md
-├─ LICENSE
-└─ README.md       # (this file)
++-- bundler/        # Optional bundler for CDN / production builds
++-- doc/            # Diagrams & documentation assets
++-- examples/       # Real demo applications
++-- spa/            # SPA engines by version
+|   +-- 1.0.0
+|   +-- 1.0.1
+|   +-- 2.0.0
+|   +-- 2.0.1
+|   +-- 2.0.2
+|   +-- 2.0.3
+|   +-- 2.0.4   <- actively documented & recommended
++-- CHANGELOG.md
++-- LICENSE
++-- README.md       # (this file)
 ```
 
 > ⚠️ Earlier versions are kept for **learning, comparison, and historical context**.
-> New users should start with **`spa/2.0.3`**.
+> New users should start with **`spa/2.0.4`**.
 
 ---
 
-## Current Recommended Version: v2.0.3
+## Current Recommended Version: v2.0.4
 
-**SPA v2.0.3** is the most mature iteration and introduces a clearer execution model between:
+**SPA v2.0.4** is the most mature iteration and introduces a clearer execution model between:
 
 * **Native ESM development mode** (`run.dev.js`)
 * **Bundled production mode** (`run.start.js`)
 
-Key highlights in v2.0.3:
+Key highlights in v2.0.4:
 
 * Explicit **reactor-based routing model**
 * Stack-inspired lifecycle hooks (`onMeet`, `onArrive`, `onExit`, `onComeback`)
@@ -67,7 +70,41 @@ Key highlights in v2.0.3:
 
 Full documentation and examples live here:
 
-👉 **[`spa/2.0.3/README.md`](./spa/2.0.3/README.md)**
+👉 **[`spa/2.0.4/README.md`](./spa/2.0.4/README.md)**
+
+---
+
+## Quickstart (No npm)
+
+Run these commands from `spa/2.0.4`.
+
+These scripts are ES modules. If your Node treats `.js` as CommonJS, rename the `run.*.js` files to `.mjs` (recommended) or run from a directory that is already ESM-enabled. This repo avoids `package.json` by default.
+
+### Dev Mode
+
+```bash
+node run.dev.js
+```
+
+Open: http://localhost:2020
+
+Note: Dev mode in v2.0.4 adds a focus-based auto reload when files change.
+
+### Start Mode
+
+```bash
+node run.start.js
+```
+
+Open: http://localhost:2121
+
+### Bundle Mode
+
+```bash
+node run.bundle.js
+```
+
+Output: `cdn/djs.prod.js`
 
 ---
 
@@ -144,7 +181,7 @@ Bundled output exposes the engine as:
 window.Spa
 ```
 
-Bundler usage and details are documented inside each SPA version (latest: v2.0.3).
+Bundler usage and details are documented inside each SPA version (latest: v2.0.4).
 
 ---
 
@@ -170,10 +207,28 @@ It exists to explain *why* those frameworks work.
 * [v2.0.0](./spa/2.0.0/) – Portable engine refactor
 * [v2.0.1](./spa/2.0.1/)
 * [v2.0.2](./spa/2.0.2/)
-* **[v2.0.3](./spa/2.0.3/)** – Current, recommended
+* [v2.0.3](./spa/2.0.3/)
+* **[v2.0.4](./spa/2.0.4/)** – Current, recommended
+
+---
+
+## Testing
+
+There is no automated test runner in this repo. Validation is manual:
+
+1. Run Dev mode and confirm the app loads and routing works.
+2. Run Start mode and confirm the bundled output behaves the same.
+3. Run Bundle mode and confirm `cdn/djs.prod.js` is produced and works when included via `<script>`.
 
 ---
 
 ## License
 
 MIT © dimaspandu
+
+
+
+
+
+
+

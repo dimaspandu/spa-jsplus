@@ -1,4 +1,4 @@
-﻿# SPA-JSPLUS v2.0.3
+﻿# SPA-JSPLUS v2.0.4
 
 SPA-JSPlus is a **vanilla JavaScript Single Page Application (SPA) engine** designed as a **reference implementation**, not a framework.
 
@@ -21,6 +21,7 @@ This project demonstrates how a modern SPA can be built using **native browser A
 * Designed to be copied, modified, and embedded
 
 ---
+
 ## Key Concepts
 
 * SPA routing without frameworks
@@ -58,7 +59,7 @@ This project demonstrates how a modern SPA can be built using **native browser A
 
 ## Quickstart (No npm)
 
-Run these commands from `spa/2.0.3`.
+Run these commands from `spa/2.0.4`.
 
 These scripts are ES modules. If your Node treats `.js` as CommonJS, rename the `run.*.js` files to `.mjs` (recommended) or run from a directory that is already ESM-enabled. This repo avoids `package.json` by default.
 
@@ -118,11 +119,11 @@ ngapack is used **only for bundling**, never during development.
 
 ---
 
-## What’s New in v2.0.3
+## What’s New in v2.0.4
 
 ### 🔹 New Build & Execution Workflow
 
-Version **2.0.3** introduces a **clear separation of execution modes**:
+Version **2.0.4** introduces a **clear separation of execution modes**:
 
 | Mode       | Purpose                       |
 | ---------- | ----------------------------- |
@@ -131,6 +132,8 @@ Version **2.0.3** introduces a **clear separation of execution modes**:
 | **Bundle** | Single-file CDN distribution  |
 
 This makes SPA-JSPlus usable as:
+
+Dev mode adds a focus-based auto reload when files change.
 
 * a development playground
 * a production-ready SPA
@@ -342,10 +345,10 @@ ctx.query.page
 
 ---
 
-## Project Structure (v2.0.3)
+## Project Structure (v2.0.4)
 
 ```
-spa/2.0.3
+spa/2.0.4
 +-- src/            # ESM source
 +-- dist/           # Bundled preview output
 +-- cdn/            # Single-file CDN build
@@ -371,4 +374,10 @@ spa/2.0.3
 ## License
 
 MIT © dimaspandu
+
+
+
+
+
+
 
